@@ -33,6 +33,7 @@ function get_news()
 
 function get_news_from_feed($feedurl)
 {
+	//downloads + parses a rss 2.0 feed
 	$xml = cached_file_get_contents($feedurl);
 	try {
 		libxml_use_internal_errors(true);
@@ -47,10 +48,18 @@ function get_news_from_feed($feedurl)
 
 	if ($xml)
 	{
+		$count = 0;
 		foreach ($xml->xpath('/rss/channel/item') as $item)
 		{
+			if (strlen($item->title)<=0)
+				continue;
+			if ((stripos($item->title, 'nota') !== false)
+				 || (stripos($item->link, 'nota.machys.net') !== false))
+				continue;
 			$newsdata = array((string) $item->title, (string) $item->link);
 			$cnews .= str_replace($cnewskeys, $newsdata, $cnewstemplate);
+			if($count>20) break; //limit to 20 news items
+			$count++;
 		}
 	}
 	if ($cnews == '')
@@ -64,7 +73,7 @@ function get_news_from_feed($feedurl)
 
 function get_community_news()
 {
-	return get_news_from_feed('http://springinfo.info/?feed=rss');
+	return get_news_from_feed('http://www.springinfo.info/feed/');
 }
 
 function get_forum_posts()

@@ -2,7 +2,7 @@
 /**
 *
 * @package VC
-* @version $Id: captcha_abstract.php 10085 2009-09-01 15:08:04Z acydburn $
+* @version $Id$
 * @copyright (c) 2006, 2008 phpBB Group
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
 *
@@ -59,7 +59,7 @@ class phpbb_default_captcha
 	{
 		global $user;
 
-		$this->code = gen_rand_string(mt_rand(CAPTCHA_MIN_CHARS, CAPTCHA_MAX_CHARS));
+		$this->code = gen_rand_string_friendly(mt_rand(CAPTCHA_MIN_CHARS, CAPTCHA_MAX_CHARS));
 		$this->seed = hexdec(substr(unique_id(), 4, 10));
 
 		// compute $seed % 0x7fffffff
@@ -98,10 +98,14 @@ class phpbb_default_captcha
 			$link = append_sid($phpbb_root_path . 'ucp.' . $phpEx,  'mode=confirm&amp;confirm_id=' . $this->confirm_id . '&amp;type=' . $this->type);
 			$explain = $user->lang(($this->type != CONFIRM_POST) ? 'CONFIRM_EXPLAIN' : 'POST_CONFIRM_EXPLAIN', '<a href="mailto:' . htmlspecialchars($config['board_contact']) . '">', '</a>');
 
+			$captcha = '<div style="background-image:url(\'' . $link . '\'); width:360px; height:96px"></div>';
+
 			$template->assign_vars(array(
 				'CONFIRM_IMAGE_LINK'		=> $link,
-				'CONFIRM_IMAGE'				=> '<img src="' . $link . '" />',
-				'CONFIRM_IMG'				=> '<img src="' . $link . '" />',
+				//'CONFIRM_IMAGE'				=> '<img src="' . $link . '" />',
+				//'CONFIRM_IMG'				=> '<img src="' . $link . '" />',
+				'CONFIRM_IMAGE'				=> $captcha,
+				'CONFIRM_IMG'				=> $captcha,
 				'CONFIRM_ID'				=> $this->confirm_id,
 				'S_CONFIRM_CODE'			=> true,
 				'S_TYPE'					=> $this->type,
@@ -193,6 +197,11 @@ class phpbb_default_captcha
 	{
 		global $config, $db, $user;
 
+		if (empty($user->lang))
+		{
+			$user->setup();
+		}
+
 		$error = '';
 		if (!$this->confirm_id)
 		{
@@ -230,7 +239,7 @@ class phpbb_default_captcha
 	{
 		global $db, $user;
 
-		$this->code = gen_rand_string(mt_rand(CAPTCHA_MIN_CHARS, CAPTCHA_MAX_CHARS));
+		$this->code = gen_rand_string_friendly(mt_rand(CAPTCHA_MIN_CHARS, CAPTCHA_MAX_CHARS));
 		$this->confirm_id = md5(unique_id($user->ip));
 		$this->seed = hexdec(substr(unique_id(), 4, 10));
 		$this->solved = 0;
@@ -254,7 +263,7 @@ class phpbb_default_captcha
 	{
 		global $db, $user;
 
-		$this->code = gen_rand_string(mt_rand(CAPTCHA_MIN_CHARS, CAPTCHA_MAX_CHARS));
+		$this->code = gen_rand_string_friendly(mt_rand(CAPTCHA_MIN_CHARS, CAPTCHA_MAX_CHARS));
 		$this->seed = hexdec(substr(unique_id(), 4, 10));
 		$this->solved = 0;
 		// compute $seed % 0x7fffffff
@@ -276,7 +285,7 @@ class phpbb_default_captcha
 	{
 		global $db, $user;
 
-		$this->code = gen_rand_string(mt_rand(CAPTCHA_MIN_CHARS, CAPTCHA_MAX_CHARS));
+		$this->code = gen_rand_string_friendly(mt_rand(CAPTCHA_MIN_CHARS, CAPTCHA_MAX_CHARS));
 		$this->seed = hexdec(substr(unique_id(), 4, 10));
 		$this->solved = 0;
 		// compute $seed % 0x7fffffff

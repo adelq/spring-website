@@ -2,7 +2,7 @@
 /**
 *
 * @package utf
-* @version $Id: utf_normalizer.php 8479 2008-03-29 00:22:48Z naderman $
+* @version $Id$
 * @copyright (c) 2005 phpBB Group
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
 *
@@ -151,7 +151,8 @@ class utf_normalizer
 	* @param	string	&$str	Unchecked UTF string
 	* @return	string			The string, validated and in normal form
 	*/
-	function nfkc(&$str)
+	// TVO 2012/07/04: Added 'static' to get rid of PHP warnings in the wiki. (Auth_phpBB plugin?)
+	static function nfkc(&$str)
 	{
 		$pos = strspn($str, UTF8_ASCII_RANGE);
 		$len = strlen($str);
